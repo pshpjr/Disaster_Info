@@ -8,7 +8,8 @@
             try {
                 if (!rs.next()) break;
                 else{
-                    하고싶은 거거                }
+                Toast.setText
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
