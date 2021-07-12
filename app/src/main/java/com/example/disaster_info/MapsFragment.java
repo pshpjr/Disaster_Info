@@ -3,6 +3,7 @@ package com.example.disaster_info;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -40,8 +41,11 @@ public class MapsFragment extends Fragment {
          * 고리스포츠문화센터	35.329446	129.2877944
          * 기장문화예절학교	35.32549534	129.2682777
          */
+
+
         @Override
         public void onMapReady(GoogleMap googleMap) {
+
 
             data.add(new MarkerOptions().title("신암마을 뒤 신도로2(신규)").position(new LatLng(35.219069, 129.224961)));
             data.add(new MarkerOptions().title("문동마을 뒷산").position(new LatLng(35.307811, 129.2567075)));
@@ -72,4 +76,5 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
     }
+
 }

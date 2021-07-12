@@ -73,7 +73,7 @@ public class DBConnection {
                     Log.d("DBConnection","db isclosed");
                     return false;
                 } else {
-                    Log.d("DBConnection","에러");
+                    Log.d("DBConnection","연결성공");
                     return true;
                 }
             }

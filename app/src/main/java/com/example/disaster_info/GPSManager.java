@@ -2,6 +2,7 @@ package com.example.disaster_info;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 
 import android.Manifest;
@@ -16,13 +17,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.Serializable;
 
 public class GPSManager extends Service implements LocationListener {
-    Context context;
+    private Context context = this;
+
     Location location;//위치정보저장
     double latitude;
     double longitude;
@@ -31,11 +34,16 @@ public class GPSManager extends Service implements LocationListener {
     protected LocationManager locationManager;
 
     public GPSManager(){
+
+
     }
     public GPSManager(Context _context){
         context = _context;
         getLocation();
     }
+
+
+
     public Location getLocation(){
         try {
 
@@ -143,6 +151,7 @@ public class GPSManager extends Service implements LocationListener {
         return null;
     }
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
+        getLocation();
         sendMessage();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -150,8 +159,11 @@ public class GPSManager extends Service implements LocationListener {
     private void sendMessage(){
         Log.d("messageService", "Broadcasting message");
         Intent intent = new Intent("LocationChange");
-        intent.putExtra("Location", new SeializableLocation(location));
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent); }
+        intent.putExtra("latitude", location.getLatitude());
+        intent.putExtra("longitude",location.getLongitude());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
     class SeializableLocation implements Serializable {
         Location l;
 
@@ -160,4 +172,6 @@ public class GPSManager extends Service implements LocationListener {
             this.l = l;
         }
     }
+
+
 }
