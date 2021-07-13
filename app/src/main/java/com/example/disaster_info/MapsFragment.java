@@ -5,8 +5,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +18,20 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapsFragment extends Fragment {
     ArrayList <MarkerOptions> data = new ArrayList<>();
+
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         /**
          * Manipulates the map once available.
@@ -46,16 +55,56 @@ public class MapsFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
 
+            Location myLocation = new GPSManager(getActivity()).getLocation();
+            final Geocoder geocoder = new Geocoder(getActivity());
+            String division = null;
+            try {
+                Address b;
+                List<Address> a = geocoder.getFromLocation(myLocation.getLatitude(),myLocation.getLongitude(),20);
+                for(Address add: a){
+                    if(add.getSubLocality() != null) {
+                        division = add.getSubLocality();
+                        break;
+                    }
+                }
+                Log.d("location",a.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            data.add(new MarkerOptions().title("신암마을 뒤 신도로2(신규)").position(new LatLng(35.219069, 129.224961)));
-            data.add(new MarkerOptions().title("문동마을 뒷산").position(new LatLng(35.307811, 129.2567075)));
-            data.add(new MarkerOptions().title("칠암초등학교").position(new LatLng(35.29875141, 129.2559105)));
-            data.add(new MarkerOptions().title("부경대수산과학연구소").position(new LatLng(35.285577, 129.2567909)));
 
+            assert division != null;
+            division = division.substring(0,division.length()-1);
+            ResultSet Pindata = new DBConnection().getData("SELECT 지진_해일_대피소명,위도,경도 FROM dbo.부산_대피소 where 소재지_도로명_주소 like N'%"
+                    +division+"%' or 소재지_지번_주소 like N'%"+division+"%'");
+            if(Pindata !=null){
+                try {
+                    Pindata.next();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+            while (true){
+                try {
+                    if (!Pindata.next()) break;
+                    else{
+                        Log.d("data",Pindata.getString(1));
+                        data.add(new MarkerOptions().position(new LatLng(Float.parseFloat(Pindata.getString(2)),Float.parseFloat(Pindata.getString(3)))).title(Pindata.getString(1)));
+                    }
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+
+            }
             for(int i =0;i<data.size();i++) {
                 googleMap.addMarker(data.get(i));
             }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(data.get(1).getPosition(),13));
+            googleMap.addMarker(
+                    new MarkerOptions()
+                            .position(new LatLng(myLocation.getLatitude(),myLocation.getLongitude())))
+                    .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()),14));
         }
     };
 

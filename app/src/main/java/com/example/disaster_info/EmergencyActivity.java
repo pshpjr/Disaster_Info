@@ -39,7 +39,6 @@ public class EmergencyActivity extends AppCompatActivity {
                     .add(R.id.mapFragmentLayout,fragment)
                     .commit();
         }
-        setStartService();
     }
     private BroadcastReceiver GPSLocationReceiver = new BroadcastReceiver() {
         @Override
@@ -53,6 +52,7 @@ public class EmergencyActivity extends AppCompatActivity {
             location.setLatitude(latitude);
             location.setLongitude(longitude);
             Log.d("receiver", "Got message: " + location.toString());
+
 
         }
     };
