@@ -23,14 +23,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.Serializable;
 
-public class GPSManager extends Service implements LocationListener {
-    private Context context = this;
+public class GPSManager implements LocationListener {
+    private Context context ;
 
     Location location;//위치정보저장
     double latitude;
     double longitude;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
-    private static final long MIN_TIME_BW_UPDATES = 1000;
+    private static final long MIN_TIME_BW_UPDATES = 10000;
     protected LocationManager locationManager;
 
     public GPSManager(){
@@ -51,7 +51,7 @@ public class GPSManager extends Service implements LocationListener {
             boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if (isGPSEnabled == false && !isNetworkEnabled == false) {
+            if (!isGPSEnabled && isNetworkEnabled) {
                 Log.d("gpsTest", "gps off");
             } else {
                 //권한을 보유하고 있는지 검사
@@ -80,7 +80,7 @@ public class GPSManager extends Service implements LocationListener {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
                         }
-                        sendMessage();
+                        return location;
                     }
                 }
 
@@ -143,34 +143,6 @@ public class GPSManager extends Service implements LocationListener {
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras){
         Log.d("gpsTest", "StatusChanged");
-    }
-    @Override
-    public IBinder onBind(Intent arg0)
-    {
-        Log.d("gpsTest", "OnBind");
-        return null;
-    }
-    @Override public int onStartCommand(Intent intent, int flags, int startId) {
-        getLocation();
-        sendMessage();
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    private void sendMessage(){
-        Log.d("messageService", "Broadcasting message");
-        Intent intent = new Intent("LocationChange");
-        intent.putExtra("latitude", location.getLatitude());
-        intent.putExtra("longitude",location.getLongitude());
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    class SeializableLocation implements Serializable {
-        Location l;
-
-        public SeializableLocation(Location l) {
-            super();
-            this.l = l;
-        }
     }
 
 
