@@ -43,51 +43,8 @@ public class EmergencyActivity extends AppCompatActivity {
                     .commit();
         }
     }
-    private BroadcastReceiver GPSLocationReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
-            // Get extra data included in the Intent
-            Log.d("receiver", "Got message: " + intent.toString());
-            double latitude = intent.getDoubleExtra("latitude",35);
-            double longitude = intent.getDoubleExtra("longitude",35);
-            Location location = new Location("myLocation");
-            location.setLatitude(latitude);
-            location.setLongitude(longitude);
-            Log.d("receiver", "Got message: " + location.toString());
 
 
-        }
-    };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver( GPSLocationReceiver, new IntentFilter("LocationChange"));
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver( GPSLocationReceiver);
-
-    }
-
-    private void setStartService(){
-        startService(new Intent(EmergencyActivity.this, GPSManager.class));
-//        bindService(new Intent(this, GPSManager.class), mConnection, Context.BIND_AUTO_CREATE);
-        isGPSRun = true;
-    }
-
-    private void setStopService() {
-        if (isGPSRun) {
-            stopService(new Intent(EmergencyActivity.this, GPSManager.class));
-//            unbindService(mConnection);
-//            isGPSRun = false;
-        }
-
-    }
 
     public void OnCheckPermission() {
 
