@@ -1,24 +1,31 @@
 package com.example.disaster_info;
 
+
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
+
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 public class CheckEmergencyService extends Service {
     int Interval = 1;
     CheckDb checkDB;
+    Context context = this;
     public CheckEmergencyService() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("check","서비스 시작");
         checkDB = new CheckDb();
         Thread check = new Thread(checkDB);
         check.start();
@@ -40,27 +47,33 @@ public class CheckEmergencyService extends Service {
         String disasterType = "";
         String disasterDate = "";
         Boolean isRun = true;
-        private Handler handler;
 
         @Override
         public void run() {
-            ResultSet rs = new DBConnection().getData("select * from dbo.기상특보");
+            Log.d("check","스레드 시작");
             while (isRun) {
                 try {
-                    if (rs.next()) break;
+                    ResultSet rs = new DBConnection().getData("select * from dbo.기상특보");
+                    if (!rs.next()) break;
                     else if (!rs.getString(1).equals(disasterDate)) {
+                        Log.d("check","속보 발견");
                         disasterDate = rs.getString(1);
                         rs.next();
                         disasterType = rs.getString(2);
+                        Intent intent = new Intent("New Emergency");
+                        intent.putExtra("disasterType",disasterType);
+                        intent.putExtra("disasterDate",disasterDate);
+
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     }
 
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
-                    try {
-                        Thread.sleep(60 * 1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                }
+                try {
+                    Thread.sleep(60 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
