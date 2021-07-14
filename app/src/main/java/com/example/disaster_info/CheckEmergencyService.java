@@ -74,7 +74,7 @@ public class CheckEmergencyService extends Service {
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setSmallIcon(R.drawable.ic_launcher_foreground)
                             .setContentIntent(PendingIntent.getActivity(getApplicationContext(),0,
-                                    new Intent(getApplicationContext(),EmergencyActivity.class).putExtra("disasterType",disasterType),0))
+                                    new Intent(getApplicationContext(),MainActivity.class).putExtra("Emergency",true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK),PendingIntent.FLAG_UPDATE_CURRENT))
                             .setAutoCancel(true);
 
                         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());

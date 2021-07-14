@@ -38,28 +38,14 @@ public class EmergencyActivity extends AppCompatActivity {
         OnCheckPermission();
         setFragment();
         createNotificationChannel();
-
+        setTitle();
     }
 
     //push 알림에 붙어있는 인텐트에 값 넣어서 넘기는건 계속 null이 나와서 DB에서 따로 찾는걸로 변경
     @Override
     protected void onResume() {
         super.onResume();
-        ResultSet rs = new DBConnection().getData("select * from dbo.기상특보");
-
-        if(rs != null) {
-            while (true) {
-                try {
-                    if (!rs.next() || rs == null) break;
-                    rs.next();
-                    String disasterType = rs.getString(2).substring(2);
-                    ((TextView)findViewById(R.id.disasterType)).setText(disasterType);
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-            }
-
-        }
+        setTitle();
 
     }
 
@@ -142,6 +128,21 @@ public class EmergencyActivity extends AppCompatActivity {
         }
     }
 
+    private void setTitle(){
+        ResultSet rs = new DBConnection().getData("select * from dbo.기상특보");
 
+        if(rs != null) {
+            while (true) {
+                try {
+                    if (!rs.next() || rs == null) break;
+                    rs.next();
+                    String disasterType = rs.getString(2).substring(2);
+                    ((TextView)findViewById(R.id.disasterType)).setText(disasterType);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+    }
 
 }
