@@ -39,23 +39,6 @@ public class EmergencyActivity extends AppCompatActivity {
         setFragment();
         createNotificationChannel();
 
-        findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!isCheckServiceRun) {
-                    startService(new Intent(EmergencyActivity.this, CheckEmergencyService.class));
-                    isCheckServiceRun = true;
-                }
-            }
-        });
-
-        findViewById(R.id.stop).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopService(new Intent(EmergencyActivity.this,CheckEmergencyService.class));
-                isCheckServiceRun = false;
-            }
-        });
     }
 
     //push 알림에 붙어있는 인텐트에 값 넣어서 넘기는건 계속 null이 나와서 DB에서 따로 찾는걸로 변경
