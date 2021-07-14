@@ -1,14 +1,16 @@
 package com.example.disaster_info;
 
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.sql.ResultSet;
@@ -16,9 +18,10 @@ import java.sql.SQLException;
 
 
 public class CheckEmergencyService extends Service {
-    int Interval = 1;
+    final int INTERVAL = 1;
     CheckDb checkDB;
     Context context = this;
+
     public CheckEmergencyService() {
     }
 
@@ -34,7 +37,7 @@ public class CheckEmergencyService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        checkDB.stop();
+        Log.d("check","서비스 종료");
     }
 
     @Override
@@ -54,24 +57,35 @@ public class CheckEmergencyService extends Service {
             while (isRun) {
                 try {
                     ResultSet rs = new DBConnection().getData("select * from dbo.기상특보");
-                    if (!rs.next()) break;
+                    if (!rs.next() || rs == null) continue;
                     else if (!rs.getString(1).equals(disasterDate)) {
+
                         Log.d("check","속보 발견");
                         disasterDate = rs.getString(1);
                         rs.next();
-                        disasterType = rs.getString(2);
-                        Intent intent = new Intent("New Emergency");
-                        intent.putExtra("disasterType",disasterType);
-                        intent.putExtra("disasterDate",disasterDate);
+                        disasterType = rs.getString(2).substring(2);
+                        Log.d("check",disasterDate +" " + disasterType);
 
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+                        NotificationCompat.Builder builder =
+                            new NotificationCompat.Builder(getApplicationContext(), "Disaster_Info")
+                            .setContentTitle("속보 발생")
+                            .setContentText(disasterDate +" "+disasterType)
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            .setSmallIcon(R.drawable.ic_launcher_foreground)
+                            .setContentIntent(PendingIntent.getActivity(getApplicationContext(),0,
+                                    new Intent(getApplicationContext(),EmergencyActivity.class).putExtra("disasterType",disasterType),0))
+                            .setAutoCancel(true);
+
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                        notificationManager.notify(119, builder.build());
                     }
 
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
                 try {
-                    Thread.sleep(60 * 1000);
+                    Thread.sleep(INTERVAL *60 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -3,89 +3,84 @@ package com.example.disaster_info;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import java.io.Serializable;
-
+/*
+* 문제 1. 사용자가 속보 확인 안 하면 갱신이 안 될지도
+* 문제 2. 앱을 실행하면 바로 알림이 뜸
+* */
 public class EmergencyActivity extends AppCompatActivity {
     private boolean isGPSRun;
     int nCurrentPermission = 0;
     static final int PERMISSIONS_REQUEST = 0x0000001;
-
+    Boolean isCheckServiceRun = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emergency);
+
         OnCheckPermission();
-
-        Fragment current = getSupportFragmentManager().findFragmentById(R.id.mapFragmentLayout);
-
-
-        if(current == null){
-            Fragment fragment = new MapsFragment();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.mapFragmentLayout,fragment)
-                    .commit();
-        }
+        setFragment();
+        createNotificationChannel();
 
         findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startService(new Intent(EmergencyActivity.this,CheckEmergencyService.class));
+                if(!isCheckServiceRun) {
+                    startService(new Intent(EmergencyActivity.this, CheckEmergencyService.class));
+                    isCheckServiceRun = true;
+                }
             }
         });
+
         findViewById(R.id.stop).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stopService(new Intent(EmergencyActivity.this,CheckEmergencyService.class));
+                isCheckServiceRun = false;
             }
         });
-        createNotificationChannel();
-
-
     }
 
+    //push 알림에 붙어있는 인텐트에 값 넣어서 넘기는건 계속 null이 나와서 DB에서 따로 찾는걸로 변경
     @Override
     protected void onResume() {
         super.onResume();
-        BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d("check","속보 받음");
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "Disaster_Info")
-                        .setContentTitle(intent.getStringExtra("emergencyType"))
-                        .setContentText("클! 났! 다!")
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setSmallIcon(R.drawable.ic_launcher_foreground);
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-                notificationManager.notify(119, builder.build());
+        ResultSet rs = new DBConnection().getData("select * from dbo.기상특보");
+
+        if(rs != null) {
+            while (true) {
+                try {
+                    if (!rs.next() || rs == null) break;
+                    rs.next();
+                    String disasterType = rs.getString(2).substring(2);
+                    ((TextView)findViewById(R.id.disasterType)).setText(disasterType);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
             }
-        };
-        LocalBroadcastManager.getInstance(this).registerReceiver( mMessageReceiver, new IntentFilter("New Emergency"));
+
+        }
 
     }
 
+    //권한 확인을 위한 함수
     public void OnCheckPermission() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -114,9 +109,7 @@ public class EmergencyActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
-
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -134,6 +127,8 @@ public class EmergencyActivity extends AppCompatActivity {
             }
         }
     }
+
+    //우리 버전 안드로이드에선 이렇게 등록해줘야 알림 사용 가능
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -149,4 +144,21 @@ public class EmergencyActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
+
+    //mapFragment 창에 지도 띄움
+    private void setFragment(){
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.mapFragmentLayout);
+
+
+        if(current == null){
+            Fragment fragment = new MapsFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.mapFragmentLayout,fragment)
+                    .commit();
+        }
+    }
+
+
+
 }
