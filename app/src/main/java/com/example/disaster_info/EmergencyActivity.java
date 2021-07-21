@@ -67,20 +67,8 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     private void setTitle(){
-        ResultSet rs = new DBConnection().getData("select * from dbo.기상특보");
-
-        if(rs != null) {
-            while (true) {
-                try {
-                    if (!rs.next() || rs == null) break;
-                    rs.next();
-                    String disasterType = rs.getString(2).substring(2);
-                    ((TextView)findViewById(R.id.disasterType)).setText(disasterType);
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-            }
-        }
+        String title = getIntent().getStringExtra("disasterType");
+        ((TextView)findViewById(R.id.disasterType)).setText(title);
     }
 
 }

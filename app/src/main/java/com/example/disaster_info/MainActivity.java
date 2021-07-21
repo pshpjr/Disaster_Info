@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -21,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startService(new Intent(MainActivity.this, CheckEmergencyService.class));
+        if(!isServiceRunning()) {
+            startService(new Intent(MainActivity.this, CheckEmergencyService.class));
+        }
         OnCheckPermission();
 
 
@@ -31,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("메인","속보보기");
-                startActivity(new Intent(MainActivity.this,EmergencyActivity.class));
+                startActivity(new Intent(MainActivity.this,EmergencyListActivity.class));
 
             }
         });
@@ -91,5 +95,33 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+    }
+    public Boolean isServiceRunning(){
+
+        // 시스템 내부의 액티비티 상태를 파악하는 ActivityManager객체를 생성한다.
+
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+
+        //  manager.getRunningServices(가져올 서비스 목록 개수) - 현재 시스템에서 동작 중인 모든 서비스 목록을 얻을 수 있다.
+
+
+
+        // 리턴값은 List<ActivityManager.RunningServiceInfo>이다. (ActivityManager.RunningServiceInfo의 객체를 담은 List)
+
+
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+
+
+
+            // ActivityManager.RunningServiceInfo의 객체를 통해 현재 실행중인 서비스의 정보를 가져올 수 있다.
+            if (CheckEmergencyService.class.getName().equals(service.service.getClassName())) {
+
+                return true;
+            }
+
+        }
+        return  false;
+
     }
 }

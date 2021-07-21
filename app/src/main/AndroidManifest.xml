@@ -17,14 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Disaster_Info">
-        <activity android:name=".NewsActivity"></activity>
 
-        <service
-            android:name=".CheckEmergencyService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name=".ShowImage" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
@@ -35,13 +28,28 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".NewsActivity" />
+
+        <activity android:name=".ShowImage" />
+
+        <activity android:name=".EmergencyListActivity"
+            android:parentActivityName =".MainActivity"/>
+
+        <activity
+            android:name=".EmergencyActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName =".MainActivity"/>
+
+        <service
+            android:name=".CheckEmergencyService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".EmergencyActivity"
-            android:launchMode="singleTop" />
     </application>
 
 </manifest>
