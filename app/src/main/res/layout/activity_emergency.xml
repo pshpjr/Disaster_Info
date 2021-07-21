@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EmergencyActivity">
+    tools:context=".EmergencyActivity"
+    android:background="@color/cardBackground"
+    >
 
     <FrameLayout
         android:id="@+id/mapFragmentLayout"
@@ -21,6 +23,8 @@
     </FrameLayout>
 
     <TextView
+        android:textColor="@color/text"
+        android:textSize="30dp"
         android:id="@+id/disasterType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

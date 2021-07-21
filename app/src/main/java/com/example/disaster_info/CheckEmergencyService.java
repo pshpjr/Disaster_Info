@@ -1,10 +1,13 @@
 package com.example.disaster_info;
 
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -28,6 +31,7 @@ public class CheckEmergencyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        createNotificationChannel();
         Log.d("check","서비스 시작");
         checkDB = new CheckDb();
         Thread check = new Thread(checkDB);
@@ -93,6 +97,22 @@ public class CheckEmergencyService extends Service {
         }
         public void stop () {
             isRun = false;
+        }
+    }
+    //우리 버전 안드로이드에선 이렇게 등록해줘야 알림 사용 가능
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Disaster_Info";
+            String description = "Disaster_Info";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("Disaster_Info", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 }
