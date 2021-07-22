@@ -1,10 +1,15 @@
 package com.example.disaster_info;
 
 
+import android.app.ActivityManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -28,6 +33,9 @@ public class CheckEmergencyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        createNotificationChannel();
+
+
         Log.d("check","서비스 시작");
         checkDB = new CheckDb();
         Thread check = new Thread(checkDB);
@@ -44,6 +52,12 @@ public class CheckEmergencyService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d("check","unBInd ");
+        return super.onUnbind(intent);
     }
 
     private class CheckDb implements Runnable {
@@ -66,6 +80,10 @@ public class CheckEmergencyService extends Service {
                         disasterType = rs.getString(2).substring(2);
                         Log.d("check",disasterDate +" " + disasterType);
 
+                        Intent i = new Intent(getApplicationContext(),EmergencyListActivity.class).putExtra("disasterType",disasterType);
+                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+                        stackBuilder.addNextIntentWithParentStack(i);
+                        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
                         NotificationCompat.Builder builder =
                             new NotificationCompat.Builder(getApplicationContext(), "Disaster_Info")
@@ -73,8 +91,7 @@ public class CheckEmergencyService extends Service {
                             .setContentText(disasterDate +" "+disasterType)
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setSmallIcon(R.drawable.ic_launcher_foreground)
-                            .setContentIntent(PendingIntent.getActivity(getApplicationContext(),0,
-                                    new Intent(getApplicationContext(),MainActivity.class).putExtra("Emergency",true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK),PendingIntent.FLAG_UPDATE_CURRENT))
+                            .setContentIntent(pendingIntent)
                             .setAutoCancel(true);
 
                         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
@@ -95,4 +112,24 @@ public class CheckEmergencyService extends Service {
             isRun = false;
         }
     }
+
+    //우리 버전 안드로이드에선 이렇게 등록해줘야 알림 사용 가능
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Disaster_Info";
+            String description = "Disaster_Info";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("Disaster_Info", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }     // isServiceRunning 메소드에 들어가는 파라미터 값
+
+
+
 }

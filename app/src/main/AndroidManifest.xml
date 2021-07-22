@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.disaster_info">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -18,13 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Disaster_Info">
-        <service
-            android:name=".CheckEmergencyService"
-            android:enabled="true"
-            android:exported="true"></service>
 
-        <activity android:name=".ShowImage" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,12 +28,28 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".NewsActivity" />
+
+        <activity android:name=".ShowImage" />
+
+        <activity android:name=".EmergencyListActivity"
+            android:parentActivityName =".MainActivity"/>
+
+        <activity
+            android:name=".EmergencyActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName =".MainActivity"/>
+
+        <service
+            android:name=".CheckEmergencyService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".EmergencyActivity"
-            android:launchMode="singleTop"/>
     </application>
 
 </manifest>
