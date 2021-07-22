@@ -26,6 +26,7 @@ import java.sql.SQLException;
 * 문제 2. 앱을 실행하면 바로 알림이 뜸
 * */
 public class EmergencyActivity extends AppCompatActivity {
+    String disasterType;
     private boolean isGPSRun;
     int nCurrentPermission = 0;
 
@@ -42,9 +43,11 @@ public class EmergencyActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        getType();
+        setTitle();
+
         setFragment();
 
-        setTitle();
 
     }
 
@@ -59,6 +62,9 @@ public class EmergencyActivity extends AppCompatActivity {
 
         if(current == null){
             Fragment fragment = new MapsFragment();
+            Bundle b = new Bundle();
+            b.putString("disasterType",disasterType);
+            fragment.setArguments(b);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.mapFragmentLayout,fragment)
@@ -66,9 +72,11 @@ public class EmergencyActivity extends AppCompatActivity {
         }
     }
 
+    private void getType(){
+        disasterType = getIntent().getStringExtra("disasterType");
+    }
     private void setTitle(){
-        String title = getIntent().getStringExtra("disasterType");
-        ((TextView)findViewById(R.id.disasterType)).setText(title);
+        ((TextView)findViewById(R.id.disasterType)).setText(disasterType);
     }
 
 }
