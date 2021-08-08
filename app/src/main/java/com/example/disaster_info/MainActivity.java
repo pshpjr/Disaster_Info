@@ -3,6 +3,8 @@ package com.example.disaster_info;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.ActivityManager;
@@ -16,9 +18,15 @@ import android.widget.Toast;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     static final int PERMISSIONS_REQUEST = 0x0000001;
+
+    // 뉴스 리사이클 어뎁터 생성
+    private NewsAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +54,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this,NewsActivity.class));
             }
         });
+
+        // 뉴스 뷰 생성
+        init();
+
+        adapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+
+            }
+        });
+        // 뉴스 데이터 가져오기
+        getData();
     }
 
 
@@ -123,5 +143,37 @@ public class MainActivity extends AppCompatActivity {
         }
         return  false;
 
+    }
+
+    // 리사이클 뷰 초기화 함수
+    private void init(){
+        RecyclerView recyclerView = findViewById(R.id.recycle);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        adapter =  new NewsAdapter();
+        recyclerView.setAdapter(adapter);
+    }
+
+    // 리사이클 뷰 데이터 가져오기 함수
+    private void getData(){
+        List<String> list_text = Arrays.asList("1","2","3");
+        List<Integer> list_imageid = Arrays.asList(R.drawable.ic_launcher_foreground,
+                R.drawable.ic_launcher_background,
+                R.drawable.ic_launcher_foreground);
+        List<String> list_url = Arrays.asList("https://www.naver.com/",
+                "https://www.google.com/",
+                "https://www.youtube.com/");
+        for(int i=0;i<1;i++)
+        {
+            NewsData data = new NewsData();
+            data.setText1(list_text.get(i));
+            data.setImageid(list_imageid.get(i));
+            data.setUrl1(list_url.get(i));
+            adapter.additem(data);
+        }
+
+        adapter.notifyDataSetChanged();
     }
 }
