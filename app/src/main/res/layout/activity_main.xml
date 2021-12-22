@@ -13,11 +13,12 @@
     tools:context=".MainActivity">
 
     <RelativeLayout
+        android:id="@+id/disaster_info_card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.8"
-        tools:ignore="NestedWeights"
-        android:layout_margin="8dp">
+        android:layout_margin="8dp"
+        android:background="?android:attr/selectableItemBackground">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -30,10 +31,10 @@
 
 
                 <LinearLayout
-                    android:id="@+id/disaster_info_card"
+
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
+
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -55,187 +56,87 @@
         android:layout_margin="8dp"
 
         android:background="@color/text"/>
-    <TextView
-        android:textColor="@color/text"
-        android:textSize="30sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="행동요령"
-        android:layout_marginStart="8dp"
-        >
-    </TextView>
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:ignore="NestedWeights">
+        android:orientation="horizontal"
+        android:layout_weight="0.5"
+        android:weightSum="3"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
-        <GridLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:gravity="center"
+            android:layout_weight="1.5"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:alignmentMode="alignMargins"
-            android:columnCount="2"
-
-            android:rowCount="1"
+            android:text="미세먼지 현황"
+            android:textColor="@color/text"
+            android:textSize="25dp"
             >
 
-            <LinearLayout
-                android:id="@+id/b1"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="0.9"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center">
+        </TextView>
+        <ImageView
+            android:id="@+id/dustIcon"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/happiness"/>
+        <TextView
+            android:id="@+id/dustText"
+            android:paddingLeft="10dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:text="(매우 나쁨)"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:textColor="@color/green"/>
 
-                <ImageView
-                    android:id="@+id/imageView4"
+    </LinearLayout>
+    <View
+        android:layout_height="0.5dp"
+        android:layout_width="match_parent"
+        android:layout_margin="8dp"
+
+        android:background="@color/text"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.8"
+        tools:ignore="NestedWeights"
+        android:layout_margin="8dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            app:cardBackgroundColor="@color/blue"
+            app:cardCornerRadius="8dp">
+
+
+            <LinearLayout
+                android:id="@+id/todo_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/earth2" />
+                    android:text="재난별 행동 요령"
+                    android:textColor="@color/white"
+                    android:textSize="40sp"
+                    />
+
             </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/b2"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="0.9"
-                    android:layout_marginStart="8dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/imageView9"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/thunami" />
-                </LinearLayout>
-
-        </GridLayout>
+        </androidx.cardview.widget.CardView>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:ignore="NestedWeights">
-
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alignmentMode="alignMargins"
-            android:columnCount="2"
-            android:rowCount="1">
-
-                <LinearLayout
-                    android:id="@+id/b3"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/imageView5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/rain" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/moreinfo_card"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:layout_marginStart="8dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/imageView6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/hot" />
-                </LinearLayout>
-
-        </GridLayout>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:ignore="NestedWeights">
-
-        <GridLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alignmentMode="alignMargins"
-            android:columnCount="2"
-            android:rowCount="1">
-
-                <LinearLayout
-                    android:id="@+id/b4"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    >
-
-                    <ImageView
-                        android:id="@+id/imageView7"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/thunder" />
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:id="@+id/b5"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_rowWeight="1"
-                    android:layout_columnWeight="1"
-                    android:layout_marginStart="8dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                    <ImageView
-                        android:id="@+id/imageView8"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/typhoon" />
-                </LinearLayout>
-
-        </GridLayout>
-    </RelativeLayout>
     <View
         android:layout_height="0.5dp"
         android:layout_width="match_parent"
@@ -247,14 +148,13 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2.5"
+        android:layout_weight="4.4"
         tools:ignore="NestedWeights">
 
         <LinearLayout
-
             android:id="@+id/Newscard"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_marginEnd="8dp"
@@ -265,7 +165,8 @@
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TouchTargetSizeCheck">
 
         </LinearLayout>
 
@@ -275,28 +176,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="뉴스보기"
+            android:text="재난 뉴스"
             android:textSize="30sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
+           android:paddingTop="2dp"
             android:layout_width="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_height="wrap_content"
-            android:text="전체 보기"
+            android:text="부산 날씨 뉴스"
             android:textColor="@color/text"
-            android:textSize="30sp"
+            android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle"
-            android:layout_width="409dp"
-            android:layout_height="208dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintTop_toBottomOf="@+id/textView2"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

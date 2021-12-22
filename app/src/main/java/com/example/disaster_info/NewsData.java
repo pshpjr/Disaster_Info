@@ -3,7 +3,7 @@ package com.example.disaster_info;
 public class NewsData {
     private String text1;
     private String url1;
-    private int imageid;
+    private String imageUrl;
 
     public String getText1(){
         return text1;
@@ -17,10 +17,10 @@ public class NewsData {
     public void setUrl1(String url){
         url1 = url;
     }
-    public int getImageid(){
-        return imageid;
+    public String getImageUrl(){
+        return imageUrl;
     }
-    public void setImageid(int imageid){
-        this.imageid = imageid;
+    public void setImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
     }
 }

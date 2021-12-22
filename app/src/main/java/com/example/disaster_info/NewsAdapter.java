@@ -11,19 +11,21 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     private ArrayList<NewsData> List = new ArrayList<>();
-
+    View v;
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView textview;
         ImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-
+            v = itemView;
             textview = itemView.findViewById(R.id.textView1);
             imageView = itemView.findViewById(R.id.imageView1);
 
@@ -42,7 +44,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
         void onBind(NewsData data){
             textview.setText(data.getText1());
-            imageView.setImageResource(data.getImageid());
+            Glide.with(v).load(data.getImageUrl()).into(imageView);
         }
 
     }

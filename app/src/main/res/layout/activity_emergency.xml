@@ -12,11 +12,9 @@
         android:id="@+id/mapFragmentLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintHeight_percent="0.7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/disasterType">
 
@@ -34,16 +32,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
-        android:layout_width="379dp"
-        android:layout_height="282dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+    <Button
+        android:id="@+id/react_button"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:text="대처 방법 보기"
+        android:textSize="30dp"
+        app:circularflow_defaultRadius="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapFragmentLayout">
-
-    </FrameLayout>
-
+        app:layout_constraintTop_toBottomOf="@+id/mapFragmentLayout"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

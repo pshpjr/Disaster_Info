@@ -11,10 +11,17 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+
+import com.bumptech.glide.Glide;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +30,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     static final int PERMISSIONS_REQUEST = 0x0000001;
-
+    ImageView dustIcon ;
+    TextView dustText;
+    int dustLevel = 0;
+    DBConnection newsConnection;
+    DBConnection dustConnection;
     // 뉴스 리사이클 어뎁터 생성
     private NewsAdapter adapter;
 
@@ -34,39 +45,49 @@ public class MainActivity extends AppCompatActivity {
         if(!isServiceRunning()) {
             startService(new Intent(MainActivity.this, CheckEmergencyService.class));
         }
+
+        dustIcon = findViewById(R.id.dustIcon);
+        dustText = findViewById(R.id.dustText);
+
         OnCheckPermission();
 
+        initConnection();
+
+        newsConnection.getData();
+        dustConnection.getData();
+        setDustIconOnLevel();
+
+        setOnClickListeners();
 
 
+    }
 
+    private void initConnection() {
+        initNews();
+        initDust();
+    }
+
+    private void setOnClickListeners(){
         findViewById(R.id.disaster_info_card).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("메인","속보보기");
-                startActivity(new Intent(MainActivity.this,EmergencyListActivity.class));
+        @Override
+        public void onClick(View v) {
+            Log.d("메인","속보보기");
+            startActivity(new Intent(MainActivity.this,EmergencyListActivity.class));
 
-            }
-        });
+        }
+    });
 
         findViewById(R.id.Newscard).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,NewsActivity.class));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=%EB%B6%80%EC%82%B0+%EB%82%A0%EC%94%A8")));
             }
         });
 
-        // 뉴스 뷰 생성
-        init();
-
-        adapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-
-            }
-        });
-        // 뉴스 데이터 가져오기
-        getData();
-    }
+        findViewById(R.id.todo_button).setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), TodoListAcctivity.class);
+            startActivity(intent);
+        });}
 
 
     //권한 확인을 위한 함수
@@ -116,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     public Boolean isServiceRunning(){
 
         // 시스템 내부의 액티비티 상태를 파악하는 ActivityManager객체를 생성한다.
@@ -146,34 +168,78 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 리사이클 뷰 초기화 함수
-    private void init(){
+    private void initNews(){
         RecyclerView recyclerView = findViewById(R.id.recycle);
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-
         adapter =  new NewsAdapter();
         recyclerView.setAdapter(adapter);
+
+        newsConnection = new DBConnection().setQuery("SELECT * FROM dbo.태풍_뉴스");
+        newsConnection.connectListener = new DBConnection.ConnectListener() {
+            @Override
+            public void onConnectionSuccess(ResultSet rs) {
+                try {
+                    while (rs.next()) {
+                        NewsData data = new NewsData();
+                        data.setText1(rs.getString(1));
+                        data.setImageUrl(rs.getString(3));
+                        data.setUrl1(rs.getString(2));
+                        adapter.additem(data);
+                    }
+                    adapter.notifyDataSetChanged();
+                } catch (Exception throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onConnectionsFalse() {
+
+            }
+        };
     }
 
-    // 리사이클 뷰 데이터 가져오기 함수
-    private void getData(){
-        List<String> list_text = Arrays.asList("1","2","3");
-        List<Integer> list_imageid = Arrays.asList(R.drawable.ic_launcher_foreground,
-                R.drawable.ic_launcher_background,
-                R.drawable.ic_launcher_foreground);
-        List<String> list_url = Arrays.asList("https://www.naver.com/",
-                "https://www.google.com/",
-                "https://www.youtube.com/");
-        for(int i=0;i<1;i++)
-        {
-            NewsData data = new NewsData();
-            data.setText1(list_text.get(i));
-            data.setImageid(list_imageid.get(i));
-            data.setUrl1(list_url.get(i));
-            adapter.additem(data);
+
+
+    private void initDust(){
+        dustConnection = new DBConnection().setQuery("SELECT * FROM dbo.부산_미세먼지");
+        dustConnection.connectListener = new DBConnection.ConnectListener() {
+            @Override
+            public void onConnectionSuccess(ResultSet rs) {
+                try {
+                    rs.next();
+                    dustLevel = Integer.parseInt(rs.getString(2).replaceAll("[^\\d]", ""));
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                    dustLevel = -1;
+                }
+            }
+
+            @Override
+            public void onConnectionsFalse() {
+
+            }
+        };
+
+    }
+
+    private void setDustIconOnLevel(){
+        if(0<=dustLevel&&dustLevel<=30){
+            dustIcon.setImageResource(R.drawable.happiness);
+            dustText.setText("좋음");
+        }else if(30<dustLevel&&dustLevel<=80){
+            dustIcon.setImageResource(R.drawable.neutral);
+            dustText.setText("보통");
+        }else if(80<dustLevel&&dustLevel<=150){
+            dustIcon.setImageResource(R.drawable.sad);
+            dustText.setText("나쁨");
+        }else if(150<dustLevel){
+            dustIcon.setImageResource(R.drawable.stunned);
+            dustText.setText("매우 나쁨");
         }
-
-        adapter.notifyDataSetChanged();
+        else
+            dustText.setText("네트워크 오류");
     }
+
 }

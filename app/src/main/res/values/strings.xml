@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Disaster_Info</string>
+    <string name="app_name">부산재난알림이</string>
 
     <!--Credits only-->
 
@@ -7,4 +7,5 @@
 
     <string name="rain">폭우</string>
     <string name="hello_blank_fragment">hi</string>
+    <string name="middle_font_size">30dp</string>
 </resources>

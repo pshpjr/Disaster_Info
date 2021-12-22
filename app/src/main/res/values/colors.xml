@@ -4,8 +4,8 @@
     <color name="colorPrimaryDark">#6a738d</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="cardBackground">#e9e4f0</color>
-
-    <color name="green">#7EC544</color>
+    <color name="newsColor">#E8E8E8</color>
+    <color name="green">#03BD0B</color>
     <color name="yellow">#FBC233</color>
     <color name="red">#F6404F</color>
     <color name="blue">#78DBF3</color>
